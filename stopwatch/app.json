@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6ff7c938-3a39-40e8-b320-8f7f430de097"
+      }
+    },
+    "owner": "kenneyher"
   }
 }
