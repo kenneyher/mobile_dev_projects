@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useState, useRef, useCallback } from "react";
-import { PauseCircle, PlayCircle, StopCircle } from "lucide-react-native";
+import { Timer, Pause, TimerReset } from "lucide-react-native";
 
 function zeroPad(num) {
   return num < 10 ? `0${num}` : num;
@@ -48,16 +48,22 @@ export default function App() {
       <Text>Elapsed Time: </Text>
       <Text style={styles.stopwatch}>{formatHMS(elapsed)}</Text>
 
-      <View style={{ flexDirection: "row", gap: 20 }}>
-        <Pressable onPress={startTimer}>
-          <PlayCircle color='#5e24ff' size={48} />
+      <View style={styles.actionSection}>
+        <Pressable style={({pressed}) => running ? {...styles.actionButton, backgroundColor: "#a8a4b3"} : styles.actionButton} onPress={startTimer} disabled={running}>
+          <Timer color='#ffffff' size={16} />
+          <Text style={styles.actionButtonText}>Start</Text>
         </Pressable>
-        <Pressable onPress={running ? pauseTimer : resetTimer}>
+        <Pressable 
+          style={({pressed}) => elapsed == 0 && !running ? {...styles.actionButton, backgroundColor: "#a8a4b3"} : styles.actionButton} 
+          onPress={running ? pauseTimer : resetTimer} 
+          disabled={!running && elapsed === 0}
+        >
           {running ? (
-            <PauseCircle color='#5e24ff' size={48} />
+            <Pause color='#ffffff' size={16} />
           ): (
-            <StopCircle color='#5e24ff' size={48} />
+            <TimerReset color='#ffffff' size={16} />
           )}
+          <Text style={styles.actionButtonText}>{running ? "Pause" : "Reset"}</Text>
         </Pressable>
       </View>
     </View>
@@ -79,4 +85,25 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 20,
   },
+  actionSection: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 20,
+    maxHeight: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  actionButton: {
+    backgroundColor: "#5e24ff",
+    padding: 10,
+    borderRadius: 10,
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  actionButtonText: {
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 16,
+  }
 });
