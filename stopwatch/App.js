@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button } from "react-native";
-import { useState, useRef } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { useState, useRef, useCallback } from "react";
+import { PauseCircle, PlayCircle, StopCircle } from "lucide-react-native";
 
 function zeroPad(num) {
   return num < 10 ? `0${num}` : num;
@@ -16,22 +17,29 @@ function formatHMS(elapsed) {
 
 export default function App() {
   const [elapsed, setElapsed] = useState(0);
+  const [running, setRunning] = useState(false);
   const timerRef = useRef(null);
 
-  function startTimer() {
+  const startTimer = useCallback(() => {
     if (timerRef.current) return;
 
     timerRef.current = setInterval(() => {
       setElapsed((prevElapsed) => ++prevElapsed);
     }, 1000);
-  }
+    setRunning(true);
+  }, [timerRef]);
 
-  function pauseTimer() {
+  const pauseTimer = useCallback(() => {
     if (!timerRef.current) return;
 
     clearInterval(timerRef.current);
     timerRef.current = null;
-  }
+    setRunning(false);
+  }, [timerRef]);
+
+  const resetTimer = useCallback(() => {
+    setElapsed(0);
+  }, [timerRef])
 
   return (
     <View style={styles.container}>
@@ -41,8 +49,16 @@ export default function App() {
       <Text style={styles.stopwatch}>{formatHMS(elapsed)}</Text>
 
       <View style={{ flexDirection: "row", gap: 20 }}>
-        <Button title="Start" color="#5e24ff" onPress={startTimer} />
-        <Button title="Pause" color="#5e24ff" onPress={pauseTimer} />
+        <Pressable onPress={startTimer}>
+          <PlayCircle color='#5e24ff' size={48} />
+        </Pressable>
+        <Pressable onPress={running ? pauseTimer : resetTimer}>
+          {running ? (
+            <PauseCircle color='#5e24ff' size={48} />
+          ): (
+            <StopCircle color='#5e24ff' size={48} />
+          )}
+        </Pressable>
       </View>
     </View>
   );
