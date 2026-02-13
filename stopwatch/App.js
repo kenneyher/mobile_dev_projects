@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useReducer } from "react";
 import { Timer, Pause, TimerReset } from "lucide-react-native";
 
 function zeroPad(num) {
@@ -39,7 +39,7 @@ export default function App() {
 
   const resetTimer = useCallback(() => {
     setElapsed(0);
-  }, [timerRef])
+  }, [timerRef]);
 
   return (
     <View style={styles.container}>
@@ -49,21 +49,38 @@ export default function App() {
       <Text style={styles.stopwatch}>{formatHMS(elapsed)}</Text>
 
       <View style={styles.actionSection}>
-        <Pressable style={({pressed}) => running ? {...styles.actionButton, backgroundColor: "#a8a4b3"} : styles.actionButton} onPress={startTimer} disabled={running}>
-          <Timer color='#ffffff' size={16} />
-          <Text style={styles.actionButtonText}>Start</Text>
+        <Pressable
+          style={({ pressed }) =>
+            running
+              ? { ...styles.actionButton, backgroundColor: "#a8a4b3" }
+              : styles.actionButton
+          }
+          onPress={startTimer}
+          disabled={running}
+        >
+          <Timer color="#ffffff" size={16} />
+          <Text style={styles.actionButtonText}>
+            {elapsed == 0 && !running ? "Start" : "Continue"}
+          </Text>
         </Pressable>
-        <Pressable 
-          style={({pressed}) => elapsed == 0 && !running ? {...styles.actionButton, backgroundColor: "#a8a4b3"} : styles.actionButton} 
-          onPress={running ? pauseTimer : resetTimer} 
+
+        <Pressable
+          style={({ pressed }) =>
+            elapsed == 0 && !running
+              ? { ...styles.actionButton, backgroundColor: "#a8a4b3" }
+              : styles.actionButton
+          }
+          onPress={running ? pauseTimer : resetTimer}
           disabled={!running && elapsed === 0}
         >
           {running ? (
-            <Pause color='#ffffff' size={16} />
-          ): (
-            <TimerReset color='#ffffff' size={16} />
+            <Pause color="#ffffff" size={16} />
+          ) : (
+            <TimerReset color="#ffffff" size={16} />
           )}
-          <Text style={styles.actionButtonText}>{running ? "Pause" : "Reset"}</Text>
+          <Text style={styles.actionButtonText}>
+            {running ? "Pause" : "Reset"}
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -92,6 +109,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     justifyContent: "center",
     alignItems: "center",
+    width: "50%",
   },
   actionButton: {
     backgroundColor: "#5e24ff",
@@ -105,5 +123,5 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "700",
     fontSize: 16,
-  }
+  },
 });
