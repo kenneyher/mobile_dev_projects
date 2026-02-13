@@ -15,18 +15,35 @@ function formatHMS(elapsed) {
   return `${zeroPad(hours)}:${zeroPad(minutes)}:${zeroPad(seconds)}`;
 }
 
+function controller(stopwatch, action) {
+  switch (action.type) {
+    case "stop":
+      return { ...stopwatch, elapsed: 0, status: "stopped" };
+    case "tick":
+      return { ...stopwatch, elapsed: ++stopwatch.elapsed, status: "running" };
+    case "pause":
+      return { ...stopwatch, status: "paused" };
+    default:
+      return { ...stopwatch, status: "paused" };
+  }
+}
+
 export default function App() {
-  const [elapsed, setElapsed] = useState(0);
-  const [running, setRunning] = useState(false);
+  // const [elapsed, setElapsed] = useState(0);
+  // const [status, setstatus] = useState(false);
+  const [stopwatch, dispatch] = useReducer(controller, {
+    elapsed: 0,
+    status: "stopped",
+  });
+
   const timerRef = useRef(null);
 
   const startTimer = useCallback(() => {
     if (timerRef.current) return;
 
     timerRef.current = setInterval(() => {
-      setElapsed((prevElapsed) => ++prevElapsed);
+      dispatch({ type: "tick" });
     }, 1000);
-    setRunning(true);
   }, [timerRef]);
 
   const pauseTimer = useCallback(() => {
@@ -34,52 +51,54 @@ export default function App() {
 
     clearInterval(timerRef.current);
     timerRef.current = null;
-    setRunning(false);
+    dispatch({ type: "pause" });
   }, [timerRef]);
 
   const resetTimer = useCallback(() => {
-    setElapsed(0);
-  }, [timerRef]);
+    dispatch({ type: "stop" });
+  }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
 
       <Text>Elapsed Time: </Text>
-      <Text style={styles.stopwatch}>{formatHMS(elapsed)}</Text>
+      <Text style={styles.stopwatch}>{formatHMS(stopwatch.elapsed)}</Text>
 
       <View style={styles.actionSection}>
         <Pressable
           style={({ pressed }) =>
-            running
+            stopwatch.status == "running"
               ? { ...styles.actionButton, backgroundColor: "#a8a4b3" }
               : styles.actionButton
           }
           onPress={startTimer}
-          disabled={running}
+          disabled={stopwatch.status == "running"}
         >
           <Timer color="#ffffff" size={16} />
           <Text style={styles.actionButtonText}>
-            {elapsed == 0 && !running ? "Start" : "Continue"}
+            {stopwatch.status == "stopped"
+              ? "Start"
+              : "Continue"}
           </Text>
         </Pressable>
 
         <Pressable
           style={({ pressed }) =>
-            elapsed == 0 && !running
+            stopwatch.elapsed == 0 && stopwatch.status == "stopped"
               ? { ...styles.actionButton, backgroundColor: "#a8a4b3" }
               : styles.actionButton
           }
-          onPress={running ? pauseTimer : resetTimer}
-          disabled={!running && elapsed === 0}
+          onPress={stopwatch.status == "running" ? pauseTimer : resetTimer}
+          disabled={stopwatch.status == "stopped" && stopwatch.elapsed === 0}
         >
-          {running ? (
+          {stopwatch.status == "running" ? (
             <Pause color="#ffffff" size={16} />
           ) : (
             <TimerReset color="#ffffff" size={16} />
           )}
           <Text style={styles.actionButtonText}>
-            {running ? "Pause" : "Reset"}
+            {stopwatch.status == "running" ? "Pause" : "Reset"}
           </Text>
         </Pressable>
       </View>
