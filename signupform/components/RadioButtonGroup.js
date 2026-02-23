@@ -45,6 +45,6 @@ const styles = StyleSheet.create({
   },
   radioLabel: {
     fontSize: 15,
-    color: "#374151",
+    color: "#0f167aff",
   },
 });
