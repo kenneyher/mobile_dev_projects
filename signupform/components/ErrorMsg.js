@@ -1,12 +1,12 @@
 import { Text, StyleSheet } from "react-native";
 
-export const ErrorMsg = ({ error }) => {
-  return <Text style={styles.error}>{error}</Text>;
+export const ErrorMsg = ({ children }) => {
+  return <Text style={styles.error}>{children}</Text>;
 };
 
 const styles = StyleSheet.create({
   error: {
-    color: "#e0027cff",
+    color: "#c40089ff",
     fontSize: 12,
     fontWeight: "bold",
     marginTop: 4,
