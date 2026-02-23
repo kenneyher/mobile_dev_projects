@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     minHeight: 46,
   },
-  triggerText: { fontSize: 15, color: "#0e224dff" },
+  triggerText: { fontSize: 15, color: "#2143d8ff", fontWeight: "bold" },
   triggerPlaceholder: { fontSize: 15, color: "#8e95d1ff" },
   chevron: { fontSize: 16, color: "#2143d8ff" },
 
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#dcdbf7ff",
     gap: 12,
   },
-  rowSelected: { backgroundColor: "#c2cbe7ff" },
+  rowSelected: { backgroundColor: "#b8caffff", borderColor: "#1b32ffff" },
   flag: { fontSize: 22 },
   countryName: { flex: 1, fontSize: 15, color: "#0c1952ff" },
   countryNameSelected: { color: "#3023dfff", fontWeight: "600" },
